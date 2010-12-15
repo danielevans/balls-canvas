@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <script type="text/javascript" src="jquery-1.4.4.min.js"></script>
+    <script type="text/javascript" src="underscore-min.js"></script>
+    <script type="text/javascript">
+      $(function(){
+          var $canvas = $("#canvas");
+          var frameRate = 30;
+          var balls = [];
+          var templates = {
+              'ball': {
+                  'x': 50,
+                  'y': 50,
+                  'r': 100,
+                  'dx': 1,
+                  'dy': 1,
+                  'style': 'rgb(0,0,0)',
+                  'move': function(){
+                      this.x += this.dx/frameRate;
+                      this.y += this.dy/frameRate;
+                      if (this.x >= $canvas.width()-this.r)
+                      {
+                          this.x = ($canvas.width()-this.r)-(this.x-($canvas.width()-this.r));
+                          this.dx *= -1;
+                      }
+                      if (this.x <= this.r)
+                      {
+                          this.x = this.r-(this.x-this.r);
+                          this.dx *= -1;
+                      }
+                      if (this.y >= $canvas.height() - this.r)
+                      {
+                          this.y = ($canvas.height()-this.r)-(this.y-($canvas.height()-this.r));
+                          this.dy *= -1;
+                      }
+                      if (this.y <= this.r)
+                      {
+                          this.y = this.r-(this.y-this.r);
+                          this.dy *= -1;
+                      }
+                  },
+                  'draw': function(){
+                      if (_.first($canvas).getContext)
+                      {
+                          var ctx = _.first($canvas).getContext("2d");
+
+                          ctx.fillStyle = this.style;
+                          ctx.fillStyle = this.style;
+                          ctx.beginPath();
+                          ctx.arc(this.x,this.y,this.r,0,2*Math.PI);
+                          ctx.fill();
+                      }
+                  }
+              }
+          };
+
+
+          $canvas.click(function(){
+              balls.push($.extend({}, templates.ball, {
+                  'dx': Math.floor(Math.random()*200+50),
+                  'dy': Math.floor(Math.random()*200+50),
+                  'r': Math.floor(Math.random()*50+15),
+                  'style': "rgb("+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+","+Math.floor(Math.random()*256)+")"
+              }));
+          });
+          
+          setInterval(function(){
+              if (_.first($canvas).getContext)
+              {
+                  var ctx = _.first($canvas).getContext("2d");
+                  
+                  ctx.clearRect(0,0,canvas.width,canvas.height);
+                  ctx.fillStyle = "rgb(0,0,0)";
+                  ctx.fillText("Click to add a ball", 50,50);
+                  _.each(balls, function(ball){
+                      ball.move();
+                      ball.draw();
+                  });
+              }
+          }, 1000/frameRate);
+
+          
+
+        });//~$(function());
+    </script>
+  </head>
+  <body>
+    <canvas id="canvas" height="500" width="500">
+    Something is wrong.
+    </canvas>
+  </body>
+</html>
